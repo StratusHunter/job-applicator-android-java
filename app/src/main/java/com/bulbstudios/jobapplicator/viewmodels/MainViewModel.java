@@ -2,6 +2,7 @@ package com.bulbstudios.jobapplicator.viewmodels;
 
 import android.webkit.URLUtil;
 
+import com.bulbstudios.jobapplicator.classes.JobApplication;
 import com.bulbstudios.jobapplicator.enums.TeamType;
 import com.bulbstudios.jobapplicator.interfaces.URLValidator;
 
@@ -21,7 +22,7 @@ public class MainViewModel extends ViewModel {
 
     public MainViewModel() {
 
-        this(URLUtil::isValidUrl);
+        this(URLUtil :: isValidUrl);
     }
 
     public MainViewModel(URLValidator urlValidator) {
@@ -29,7 +30,8 @@ public class MainViewModel extends ViewModel {
         this.urlValidator = urlValidator;
     }
 
-    private @NonNull List<TeamType.Team> createTeamList(@NonNull String team) {
+    private @NonNull
+    List<TeamType.Team> createTeamList(@NonNull String team) {
 
         String[] teamArray = team.split(",");
         ArrayList<TeamType.Team> teamList = new ArrayList<>();
@@ -48,7 +50,8 @@ public class MainViewModel extends ViewModel {
         return teamList;
     }
 
-    private @NonNull List<String> createURLList(@NonNull String url) {
+    private @NonNull
+    List<String> createURLList(@NonNull String url) {
 
         String[] urlArray = url.split("\n");
         ArrayList<String> urlList = new ArrayList<>();
@@ -71,5 +74,18 @@ public class MainViewModel extends ViewModel {
         boolean urlsValid = !(createURLList(urls).isEmpty());
 
         return !name.isEmpty() && emailValid && teamsValid && !about.isEmpty() && urlsValid;
+    }
+
+    public @NonNull JobApplication createApplication(@NonNull String name, @NonNull String email, @NonNull String teams, @NonNull String about, @NonNull String urls) {
+
+        ArrayList<String> teamList = new ArrayList<>();
+        for (TeamType.Team team : createTeamList(teams)) {
+
+            teamList.add(team.getRawValue());
+        }
+
+        List<String> urlList = createURLList(urls);
+
+        return new JobApplication(name, email, about, urlList, teamList);
     }
 }

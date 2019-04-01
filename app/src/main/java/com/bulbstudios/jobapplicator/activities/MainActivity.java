@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.bulbstudios.jobapplicator.R;
+import com.bulbstudios.jobapplicator.classes.JobApplication;
 import com.bulbstudios.jobapplicator.interfaces.FindViews;
 import com.bulbstudios.jobapplicator.viewmodels.MainViewModel;
 
@@ -56,7 +57,12 @@ public class MainActivity extends AppCompatActivity implements FindViews {
 
         submitButton.setOnClickListener((View v) -> {
 
-            //JobApplication application = viewModel.createApplication();
+            JobApplication application = viewModel.createApplication(nameText.getText().toString(),
+                    emailText.getText().toString(),
+                    teamText.getText().toString(),
+                    aboutText.getText().toString(),
+                    urlText.getText().toString());
+
             //viewModel.performApplyRequest(application);
         });
     }
@@ -84,7 +90,12 @@ public class MainActivity extends AppCompatActivity implements FindViews {
 
     private void validateForm() {
 
-        boolean isValid = viewModel.validateApplication(nameText.getText().toString(), emailText.getText().toString(), teamText.getText().toString(), aboutText.getText().toString(), urlText.getText().toString());
+        boolean isValid = viewModel.validateApplication(nameText.getText().toString(),
+                emailText.getText().toString(),
+                teamText.getText().toString(),
+                aboutText.getText().toString(),
+                urlText.getText().toString());
+
         submitButton.setEnabled(isValid);
     }
 

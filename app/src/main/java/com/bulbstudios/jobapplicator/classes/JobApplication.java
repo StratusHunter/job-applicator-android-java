@@ -13,7 +13,7 @@ public class JobApplication {
     public List<String> urls;
     public List<String> teams;
 
-    JobApplication(String name, String email, String about, List<String> urls, List<String> teams) {
+    public JobApplication(String name, String email, String about, List<String> urls, List<String> teams) {
 
         this.name = name;
         this.email = email;

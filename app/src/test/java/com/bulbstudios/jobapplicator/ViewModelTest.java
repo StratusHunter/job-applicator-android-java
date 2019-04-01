@@ -1,10 +1,12 @@
 package com.bulbstudios.jobapplicator;
 
+import com.bulbstudios.jobapplicator.classes.JobApplication;
 import com.bulbstudios.jobapplicator.enums.TeamType;
 import com.bulbstudios.jobapplicator.viewmodels.MainViewModel;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -58,5 +60,30 @@ public class ViewModelTest {
         assertFalse("Email validation failing", emailInvalid);
         assertFalse("Team validation failing", teamInvalid);
         assertFalse("URL validation failing", urlInvalid);
+    }
+
+    @Test
+    public void createApplication_validatePropertyMapping_assertEqual() {
+
+        JobApplication application = urlSuccessViewModel.createApplication(name, email, team, about, url);
+
+        assertEquals("Name property not mapped correctly", application.name, name);
+        assertEquals("Email property not mapped correctly", application.email, email);
+        assertEquals("About property not mapped correctly", application.about, about);
+        assertEquals("Team property not mapped correctly", application.teams.get(0), team);
+        assertEquals("URL property not mapped correctly", application.urls.get(0), url);
+    }
+
+    @Test
+    public void createApplication_validateArrayPopulation_assertEqual() {
+
+        JobApplication application = urlSuccessViewModel.createApplication(name,
+                email,
+                String.format("%s, %s", team, TeamType.Team.ios.getRawValue()),
+                about,
+                String.format("%s\n%s", url, url));
+
+        assertEquals("Unexpected team array size", application.teams.size(), 2);
+        assertEquals("Unexpected URL array size", application.urls.size(), 2);
     }
 }
