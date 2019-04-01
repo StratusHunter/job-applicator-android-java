@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
+    testBuildType "debug"
+
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.bulbstudios.jobapplicator"
@@ -11,18 +13,28 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+        debug {
+            buildConfigField 'String', 'baseURL', '"http://f7b04122.ngrok.io/jobs/"'
+            debuggable true
+
+        }
         release {
-            minifyEnabled false
+            buildConfigField 'String', 'baseURL', '"http://f7b04122.ngrok.io/jobs/"'
+            debuggable false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+    sourceSets {
+        main.res.srcDirs += ['src/main/res-app-icon']
     }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
+    testImplementation 'org.mockito:mockito-core:1.10.19'
 }
