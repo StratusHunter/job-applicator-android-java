@@ -13,6 +13,7 @@ import com.bulbstudios.jobapplicator.classes.JobApplication;
 import com.bulbstudios.jobapplicator.interfaces.FindViews;
 import com.bulbstudios.jobapplicator.viewmodels.MainViewModel;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
@@ -63,7 +64,13 @@ public class MainActivity extends AppCompatActivity implements FindViews {
                     aboutText.getText().toString(),
                     urlText.getText().toString());
 
-            //viewModel.performApplyRequest(application);
+            new Thread(() -> {
+
+                JobApplication response = viewModel.performApplyRequest(application);
+
+                runOnUiThread(() -> handleApplicationResponse(response));
+
+            }).start();
         });
     }
 
@@ -99,9 +106,14 @@ public class MainActivity extends AppCompatActivity implements FindViews {
         submitButton.setEnabled(isValid);
     }
 
-    private void handleApplicationResponse() {
+    private void handleApplicationResponse(@Nullable JobApplication application) {
 
         @StringRes int response = R.string.application_received;
+
+        if (application == null) {
+
+            response = R.string.application_error;
+        }
 
         Toast.makeText(this, response, Toast.LENGTH_SHORT).show();
     }

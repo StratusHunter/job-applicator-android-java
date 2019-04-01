@@ -20,12 +20,12 @@ android {
     }
     buildTypes {
         debug {
-            buildConfigField 'String', 'baseURL', '"http://f7b04122.ngrok.io/jobs/"'
+            buildConfigField 'String', 'baseURL', '"http://21fa8a43.ngrok.io/jobs/"'
             debuggable true
 
         }
         release {
-            buildConfigField 'String', 'baseURL', '"http://f7b04122.ngrok.io/jobs/"'
+            buildConfigField 'String', 'baseURL', '"http://21fa8a43.ngrok.io/jobs/"'
             debuggable false
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
