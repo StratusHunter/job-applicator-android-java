@@ -22,7 +22,7 @@ public class TeamType {
             this.rawValue = rawValue;
         }
 
-        String getRawValue() { return rawValue; }
+        public String getRawValue() { return rawValue; }
     }
 
     public static @Nullable

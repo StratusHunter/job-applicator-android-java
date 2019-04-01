@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements FindViews {
         findViews();
         setupButtonObserver();
         setupValidationObserver();
+        validateForm();
     }
 
     @Override
@@ -65,11 +66,7 @@ public class MainActivity extends AppCompatActivity implements FindViews {
         TextWatcher watcher = new TextWatcher() {
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                //boolean isValid = viewModel.validateApplication();
-                //submitButton.setEnabled(isValid);
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) { validateForm(); }
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -83,6 +80,12 @@ public class MainActivity extends AppCompatActivity implements FindViews {
         aboutText.addTextChangedListener(watcher);
         teamText.addTextChangedListener(watcher);
         urlText.addTextChangedListener(watcher);
+    }
+
+    private void validateForm() {
+
+        boolean isValid = viewModel.validateApplication(nameText.getText().toString(), emailText.getText().toString(), teamText.getText().toString(), aboutText.getText().toString(), urlText.getText().toString());
+        submitButton.setEnabled(isValid);
     }
 
     private void handleApplicationResponse() {
