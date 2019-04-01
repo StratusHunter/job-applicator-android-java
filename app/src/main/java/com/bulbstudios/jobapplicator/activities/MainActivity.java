@@ -1,8 +1,10 @@
-package com.bulbstudios.jobapplicator;
+package com.bulbstudios.jobapplicator.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.bulbstudios.jobapplicator.R;
 
 public class MainActivity extends AppCompatActivity {
 
