@@ -1,10 +1,16 @@
 package com.bulbstudios.jobapplicator;
 
 import com.bulbstudios.jobapplicator.classes.JobApplication;
+import com.bulbstudios.jobapplicator.classes.RequestHandler;
 import com.bulbstudios.jobapplicator.enums.TeamType;
 import com.bulbstudios.jobapplicator.viewmodels.MainViewModel;
 
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+
+import java.util.Collections;
+import java.util.concurrent.FutureTask;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -17,8 +23,8 @@ import static org.junit.Assert.assertTrue;
  */
 public class ViewModelTest {
 
-    private MainViewModel urlSuccessViewModel = new MainViewModel((url) -> true);
-    private MainViewModel urlFailViewModel = new MainViewModel((url) -> false);
+    private MainViewModel urlSuccessViewModel = new MainViewModel((url) -> true, new RequestHandler());
+    private MainViewModel urlFailViewModel = new MainViewModel((url) -> false, new RequestHandler());
 
     private String name = "A Name";
     private String email = "test@test.com";
@@ -85,5 +91,21 @@ public class ViewModelTest {
 
         assertEquals("Unexpected team array size", application.teams.size(), 2);
         assertEquals("Unexpected URL array size", application.urls.size(), 2);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void performApplyRequest_withValidData_assertEqual() throws Exception {
+
+        JobApplication application = new JobApplication(name, email, about, Collections.singletonList(url), Collections.singletonList(team));
+
+        FutureTask<JobApplication> mockRequest = (FutureTask<JobApplication>)Mockito.mock(FutureTask.class);
+        Mockito.when(mockRequest.get()).thenReturn(application);
+
+        MainViewModel mockViewModel = Mockito.mock(MainViewModel.class);
+        Mockito.when(mockViewModel.createApplyRequestFuture(application)).thenReturn(mockRequest);
+
+        FutureTask<JobApplication> requestFuture = mockViewModel.createApplyRequestFuture(application);
+        assertEquals(application, requestFuture.get());
     }
 }

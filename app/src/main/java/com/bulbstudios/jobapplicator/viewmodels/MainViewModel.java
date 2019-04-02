@@ -20,18 +20,19 @@ import androidx.lifecycle.ViewModel;
  */
 public class MainViewModel extends ViewModel {
 
-    private URLValidator urlValidator;
-    private RequestHandler requestHandler = new RequestHandler();
+    private final URLValidator urlValidator;
+    private final RequestHandler requestHandler;
     private FutureTask<JobApplication> currentConnection;
 
     public MainViewModel() {
 
-        this(URLUtil :: isValidUrl);
+        this(URLUtil :: isValidUrl, new RequestHandler());
     }
 
-    public MainViewModel(URLValidator urlValidator) {
+    public MainViewModel(URLValidator urlValidator, RequestHandler requestHandler) {
 
         this.urlValidator = urlValidator;
+        this.requestHandler = new RequestHandler();
     }
 
     private @NonNull List<TeamType.Team> createTeamList(@NonNull String team) {
