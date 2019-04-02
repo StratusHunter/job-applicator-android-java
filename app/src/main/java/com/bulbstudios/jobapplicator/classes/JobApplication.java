@@ -9,7 +9,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,8 +28,7 @@ public class JobApplication implements ToJSON {
         urls("urls"),
         teams("teams");
 
-        private final @NonNull
-        String rawValue;
+        private final @NonNull String rawValue;
 
         JSONKey(@NonNull String rawValue) {
 
@@ -38,16 +36,11 @@ public class JobApplication implements ToJSON {
         }
     }
 
-    public @NonNull
-    final String name;
-    public @NonNull
-    final String email;
-    public @NonNull
-    final String about;
-    public @NonNull
-    final List<String> urls;
-    public @NonNull
-    final List<String> teams;
+    public @NonNull final String name;
+    public @NonNull final String email;
+    public @NonNull final String about;
+    public @NonNull final List<String> urls;
+    public @NonNull final List<String> teams;
 
     public JobApplication(@NonNull String name, @NonNull String email, @NonNull String about, @NonNull List<String> urls, @NonNull List<String> teams) {
 
@@ -58,8 +51,7 @@ public class JobApplication implements ToJSON {
         this.teams = teams;
     }
 
-    static @Nullable
-    JobApplication fromJSON(@NonNull JsonReader reader) {
+    static @Nullable JobApplication fromJSON(@NonNull JsonReader reader) {
 
         try {
 
@@ -98,14 +90,18 @@ public class JobApplication implements ToJSON {
                     while (reader.hasNext()) { urls.add(reader.nextString()); }
                     reader.endArray();
                 }
+                else {
+
+                    reader.skipValue();
+                }
             }
             reader.endObject();
 
             return new JobApplication(name, email, about, urls, teams);
         }
-        catch (IOException ioe) {
+        catch (Exception ex) {
 
-            Log.e(JobApplication.class.getSimpleName(), "Error parsing JSON");
+            Log.e(JobApplication.class.getSimpleName(), "Error parsing JSON: " + ex.getMessage());
             return null;
         }
     }

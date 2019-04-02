@@ -3,6 +3,7 @@ package com.bulbstudios.jobapplicator.activities;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,6 +14,10 @@ import com.bulbstudios.jobapplicator.classes.JobApplication;
 import com.bulbstudios.jobapplicator.interfaces.FindViews;
 import com.bulbstudios.jobapplicator.viewmodels.MainViewModel;
 
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.FutureTask;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
@@ -64,13 +69,7 @@ public class MainActivity extends AppCompatActivity implements FindViews {
                     aboutText.getText().toString(),
                     urlText.getText().toString());
 
-            new Thread(() -> {
-
-                JobApplication response = viewModel.performApplyRequest(application);
-
-                runOnUiThread(() -> handleApplicationResponse(response));
-
-            }).start();
+            performAsyncRequest(application);
         });
     }
 
@@ -104,6 +103,29 @@ public class MainActivity extends AppCompatActivity implements FindViews {
                 urlText.getText().toString());
 
         submitButton.setEnabled(isValid);
+    }
+
+    private void performAsyncRequest(@NonNull JobApplication application) {
+
+        new Thread(() -> {
+
+            try {
+
+                FutureTask<JobApplication> request = viewModel.createApplyRequestFuture(application);
+                request.run();
+                JobApplication response = request.get();
+                runOnUiThread(() -> handleApplicationResponse(response));
+            }
+            catch (CancellationException cex) {
+
+                Log.i(this.getClass().getSimpleName(), "Request cancelled");
+            }
+            catch (Exception ex) {
+
+                Log.e(this.getClass().getSimpleName(), "Error performing request");
+                runOnUiThread(() -> handleApplicationResponse(null));
+            }
+        }).start();
     }
 
     private void handleApplicationResponse(@Nullable JobApplication application) {

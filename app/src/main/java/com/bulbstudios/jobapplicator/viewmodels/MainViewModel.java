@@ -7,14 +7,11 @@ import com.bulbstudios.jobapplicator.classes.RequestHandler;
 import com.bulbstudios.jobapplicator.enums.TeamType;
 import com.bulbstudios.jobapplicator.interfaces.URLValidator;
 
-import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.FutureTask;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.util.Pair;
 import androidx.core.util.PatternsCompat;
 import androidx.lifecycle.ViewModel;
 
@@ -25,7 +22,7 @@ public class MainViewModel extends ViewModel {
 
     private URLValidator urlValidator;
     private RequestHandler requestHandler = new RequestHandler();
-    private WeakReference<HttpURLConnection> currentConnectionRef = new WeakReference<>(null);
+    private FutureTask<JobApplication> currentConnection;
 
     public MainViewModel() {
 
@@ -37,8 +34,7 @@ public class MainViewModel extends ViewModel {
         this.urlValidator = urlValidator;
     }
 
-    private @NonNull
-    List<TeamType.Team> createTeamList(@NonNull String team) {
+    private @NonNull List<TeamType.Team> createTeamList(@NonNull String team) {
 
         String[] teamArray = team.split(",");
         ArrayList<TeamType.Team> teamList = new ArrayList<>();
@@ -57,8 +53,7 @@ public class MainViewModel extends ViewModel {
         return teamList;
     }
 
-    private @NonNull
-    List<String> createURLList(@NonNull String url) {
+    private @NonNull List<String> createURLList(@NonNull String url) {
 
         String[] urlArray = url.split("\n");
         ArrayList<String> urlList = new ArrayList<>();
@@ -83,8 +78,7 @@ public class MainViewModel extends ViewModel {
         return !name.isEmpty() && emailValid && teamsValid && !about.isEmpty() && urlsValid;
     }
 
-    public @NonNull
-    JobApplication createApplication(@NonNull String name, @NonNull String email, @NonNull String teams, @NonNull String about, @NonNull String urls) {
+    public @NonNull JobApplication createApplication(@NonNull String name, @NonNull String email, @NonNull String teams, @NonNull String about, @NonNull String urls) {
 
         ArrayList<String> teamList = new ArrayList<>();
         for (TeamType.Team team : createTeamList(teams)) {
@@ -97,19 +91,14 @@ public class MainViewModel extends ViewModel {
         return new JobApplication(name, email, about, urlList, teamList);
     }
 
-    public @Nullable JobApplication performApplyRequest(@NonNull JobApplication application) {
-
-        HttpURLConnection currentConnection = currentConnectionRef.get();
+    public FutureTask<JobApplication> createApplyRequestFuture(@NonNull JobApplication application) {
 
         if (currentConnection != null) {
 
-            currentConnection.disconnect();
+            currentConnection.cancel(true);
         }
 
-        Pair<JobApplication, HttpURLConnection> response = requestHandler.performApplyRequest(application);
-
-        currentConnectionRef = new WeakReference<>(response.second);
-
-        return response.first;
+        currentConnection = new FutureTask<>(() -> requestHandler.performApplyRequest(application));
+        return currentConnection;
     }
 }

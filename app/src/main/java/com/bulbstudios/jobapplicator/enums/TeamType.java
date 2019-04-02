@@ -25,8 +25,7 @@ public class TeamType {
         public String getRawValue() { return rawValue; }
     }
 
-    public static @Nullable
-    Team with(String rawValue) {
+    public static @Nullable Team with(String rawValue) {
 
         for (Team team : Team.values()) {
 

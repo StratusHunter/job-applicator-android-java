@@ -18,15 +18,13 @@ import java.nio.charset.StandardCharsets;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.util.Pair;
 
 /**
  * Created by Terence Baker on 01/04/2019.
  */
 public class RequestHandler {
 
-    public @NonNull
-    Pair<JobApplication, HttpURLConnection> performApplyRequest(@NonNull JobApplication application) {
+    public @Nullable JobApplication performApplyRequest(@NonNull JobApplication application) {
 
         HttpURLConnection connection = createApplyRequest();
         JobApplication response = null;
@@ -38,11 +36,10 @@ public class RequestHandler {
             connection.disconnect();
         }
 
-        return new Pair<>(response, connection);
+        return response;
     }
 
-    private @Nullable
-    HttpURLConnection createApplyRequest() {
+    private @Nullable HttpURLConnection createApplyRequest() {
 
         try {
 
@@ -52,7 +49,7 @@ public class RequestHandler {
             connection.setDoOutput(true);
             connection.setDoInput(true);
             connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
             connection.setRequestProperty("Accept", "application/json");
             return connection;
         }
@@ -80,10 +77,9 @@ public class RequestHandler {
         }
     }
 
-    private @Nullable
-    <T> T getJobApplicationResponse(@NonNull HttpURLConnection connection, CreateFromJSON<T> fromJSON) {
+    private @Nullable <T> T getJobApplicationResponse(@NonNull HttpURLConnection connection, CreateFromJSON<T> fromJSON) {
 
-        try (InputStreamReader reader = new InputStreamReader(connection.getInputStream());
+        try (InputStreamReader reader = new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8);
              JsonReader jsonReader = new JsonReader(reader)) {
 
             return fromJSON.createFromJSON(jsonReader);
